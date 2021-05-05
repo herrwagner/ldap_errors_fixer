@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+name = "freenet"
+url = "https://mailag.freenet.de/piprepo/"
+verify_ssl = true
+
+[packages]
+requests = "*"
+fn-pymapi = ">=0.1.0"
+pyaml = "*"
+python-ldap = "*"
+PyMySQL = "*"
+click = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.5"
