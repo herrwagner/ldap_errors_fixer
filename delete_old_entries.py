@@ -55,10 +55,11 @@ def delete_old_entries(input_file, logger, limit_number_of_accounts: int = 10, l
                 address = line.split(' ')[0]
                 mariaDB_history_entry = line.split('MariaDB: ')[1]
                 logger.debug('Checking account {} with MariaDB history entry {}'.format(address, mariaDB_history_entry))
-                if mariaDB_history_entry is not 'Not found':
-                    if limit_days_ago is None or check_if_is_older(mariaDB_history_entry, limit_days_ago, logger) is False:
+                if mariaDB_history_entry.strip() != 'Not found':
+                    if limit_days_ago is None or check_if_is_older(mariaDB_history_entry, int(limit_days_ago), logger) is False:
                         continue
                 logger.debug('Proceeding to remove lock for account {}'.format(address))
+
                 try:
                     route = address_route(address)
                 except ValueError as err:
