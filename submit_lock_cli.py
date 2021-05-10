@@ -5,13 +5,14 @@ import click
 import check_submit_lock
 import delete_old_entries
 import process_ldap_problems
-
 import logging
+from logging.handlers import SysLogHandler
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler(sys.stdout)
+handler = SysLogHandler('/dev/log')
 handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)

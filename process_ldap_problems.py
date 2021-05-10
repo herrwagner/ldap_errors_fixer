@@ -4,7 +4,7 @@ import re
 import gzip
 
 
-_RE_WRONG = re.compile(r'^[a-z,A-Z]+:\s[0-9,a-z,A-Z,.,@]+\,.*$')
+_RE_WRONG = re.compile(r'[0-9,a-z,A-Z,.,@]+\,.*$')
 
 
 class ParseLDIF(LDIFParser):
@@ -18,22 +18,25 @@ class ParseLDIF(LDIFParser):
 
     def process_entry(self, dn, entry):
         self.logger.debug('Start processing of dn ' + dn)
-        self.logger.debug(entry)
-
-        if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
-            address = entry['cn'][0].decode("utf-8")
-            for field in entry:
-                decode_field = field[0].decode("utf-8")
-                try:
-                    wrong_field = _RE_WRONG.findall(decode_field)[0]
-                except IndexError:
-                    continue
-                else:
-                    self.logger.debug('Address {} has wrong field: {}'.format(address, wrong_field))
-                    self.output_file.write(address + ' ' + wrong_field + '\n')
-        else:
-            self.logger.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
+        try:
+             address = entry['cn'][0].decode("utf-8")
+        except KeyError:
             return
+        else:
+            try:
+                forwardto = entry['forwardto']
+            except KeyError:
+                return
+            else:
+                for _forwardto in forwardto:
+                    decode_value = _forwardto.decode("utf-8")
+                    try:
+                        wrong_field = _RE_WRONG.findall(decode_value)[0]
+                    except IndexError:
+                        continue
+                    else:
+                        self.logger.debug('Address {} has wrong field: {}: {}'.format(address, 'forwardto', wrong_field))
+                        self.output_file.write(address + ' ' + 'forwardto' + ': ' + decode_value + '\n')
 
 
 def detect_wrong_format(dump_file, logger):
