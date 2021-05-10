@@ -4,6 +4,7 @@ import sys
 import click
 import check_submit_lock
 import delete_old_entries
+import process_ldap_problems
 
 import logging
 
@@ -49,6 +50,29 @@ def delete_submit_locks(input_file, limit_days_ago, limit_number_of_accounts):
     delete_old_entries.delete_old_entries(input_file, logger=LOGGER,
                                           limit_number_of_accounts=limit_number_of_accounts,
                                           limit_days_ago=limit_days_ago)
+
+
+@cli.command()
+@click.argument('input_file')
+@click.option('--pattern', default=None)
+@click.option('--reg_ex', default=None)
+def detect_wrong_format(input_file, pattern, reg_ex):
+    """Delete entries in ldap older than limit_days_ago before today
+        :param input_file: Ldap dumb file to parse
+        :param pattern: Pattern to be detected
+        :param reg_ex: Regular expression to be detected
+    """
+    #if pattern is None and reg_ex is None:
+    #    LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
+    #    sys.exit(1)
+    #elif pattern is not None and reg_ex is not None:
+    #    LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
+    #    sys.exit(1)
+    #else:
+    #    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
+    #                                              pattern=pattern,
+    #                                              reg_ex=reg_ex)
+    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
 
 
 if __name__ == '__main__':
