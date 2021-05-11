@@ -20,24 +20,29 @@ class ParseLDIF(LDIFParser):
         self.process_entry(dn, entry)
 
     def process_entry(self, dn, entry):
-        self.logger.debug('Start processing of dn ' + dn)
+        self.logger.debug('Start processing of dn {}'.format(dn))
+        self.logger.debug('entry: {}'.format(entry))
         try:
-             address = entry['cn'][0].decode("utf-8")
+            address = entry['cn'][0].decode("utf-8")
         except KeyError:
-            return
+            try:
+                address = entry['dn'][0].decode("utf-8")
+            except KeyError:
+                return
         else:
             for field in entry:
                 if field == 'dn':
                     continue
-                decode_value = field.decode("utf-8")
-                try:
-                    wrong_field = _RE_WRONG.findall(decode_value)[0]
-                except IndexError:
-                    continue
-                else:
-                    self.logger.debug('Address {} has wrong field: {}: {}'.format(address, field,
-                                                                                  wrong_field))
-                    self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
+                for value in entry[field]:
+                    decode_value = value.decode("utf-8")
+                    try:
+                        wrong_field = _RE_WRONG.findall(decode_value)[0]
+                    except IndexError:
+                        continue
+                    else:
+                        self.logger.debug('Address {} has wrong field: {}: {}'.format(address, field,
+                                                                                      wrong_field))
+                        self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
 
 
 def detect_wrong_format(dump_file, logger):
