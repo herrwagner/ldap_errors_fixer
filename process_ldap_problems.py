@@ -26,20 +26,18 @@ class ParseLDIF(LDIFParser):
         except KeyError:
             return
         else:
-            try:
-                forwardto = entry['forwardto']
-            except KeyError:
-                return
-            else:
-                for _forwardto in forwardto:
-                    decode_value = _forwardto.decode("utf-8")
-                    try:
-                        wrong_field = _RE_WRONG.findall(decode_value)[0]
-                    except IndexError:
-                        continue
-                    else:
-                        self.logger.debug('Address {} has wrong field: {}: {}'.format(address, 'forwardto', wrong_field))
-                        self.output_file.write(address + ' ' + 'forwardto' + ': ' + decode_value + '\n')
+            for field in entry:
+                if field == 'dn':
+                    continue
+                decode_value = field.decode("utf-8")
+                try:
+                    wrong_field = _RE_WRONG.findall(decode_value)[0]
+                except IndexError:
+                    continue
+                else:
+                    self.logger.debug('Address {} has wrong field: {}: {}'.format(address, field,
+                                                                                  wrong_field))
+                    self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
 
 
 def detect_wrong_format(dump_file, logger):
