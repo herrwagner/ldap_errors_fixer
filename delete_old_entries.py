@@ -2,33 +2,8 @@
 import sys
 from datetime import datetime, timedelta
 
-from fn_pymapi import MapiClient
 from fn_pymapi.errors import PymapiError
-
-
-# credentials:
-PMAPI_USER = 'admin'
-PMAPI_PASSWORD = 'cnlbISgaJHtMkGDVjgxGi11E5EpO4vpc'
-PMAPI_HOST = 'api.freenet.de'
-PMAPI_VERSION = 'stable'
-
-
-pmapi_client = MapiClient(PMAPI_USER, PMAPI_PASSWORD, hostname=PMAPI_HOST, mapi_version=PMAPI_VERSION)
-
-
-def split_address(address: str) -> (str, str):
-    try:
-        return address.split('@')
-    except ValueError:
-        raise ValueError('Invalid email address {}'.format(address))
-
-
-def address_route(address: str):
-    try:
-        localpart, domain = split_address(address)
-    except ValueError as err:
-        raise err
-    return 'domains/{}/localparts/{}'.format(domain, localpart)
+from common import *
 
 
 def check_if_is_older(mariaDB_history_entry, limit_days_ago, logger):
@@ -42,13 +17,13 @@ def check_if_is_older(mariaDB_history_entry, limit_days_ago, logger):
         return False
 
 
-def delete_old_entries(input_file, logger, limit_number_of_accounts: int = 10, limit_days_ago=None):
+def delete_old_entries(input_file, logger, number_of_accounts: int = 10, limit_days_ago=None):
     with open(input_file, 'r') as f:
         lines = f.readlines()
     with open(input_file, "w") as f:
         delete_counter = 0
         for line in lines:
-            if delete_counter >= limit_number_of_accounts:
+            if delete_counter >= number_of_accounts:
                 f.write(line)
             else:
                 delete_counter += 1
