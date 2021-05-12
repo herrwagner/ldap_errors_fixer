@@ -5,6 +5,7 @@ import click
 import check_submit_lock
 import delete_old_entries
 import process_ldap_problems
+import fix_wrong_format
 import logging
 from logging.handlers import SysLogHandler
 
@@ -63,15 +64,15 @@ def detect_wrong_format(input_file, pattern, reg_ex):
         :param pattern: Pattern to be detected
         :param reg_ex: Regular expression to be detected
     """
-    if pattern is None and reg_ex is None:
-        LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
-        sys.exit(1)
-    elif pattern is not None and reg_ex is not None:
-        LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
-        sys.exit(1)
-    else:
-        process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
-                                                  pattern=pattern, reg_ex=reg_ex)
+    #if pattern is None and reg_ex is None:
+    #    LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
+    #    sys.exit(1)
+    #elif pattern is not None and reg_ex is not None:
+    #    LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
+    #    sys.exit(1)
+    #else:
+    #    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
+    #                                              pattern=pattern, reg_ex=reg_ex)
     process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
 
 
@@ -83,8 +84,8 @@ def fix_wrong_format(input_file, number_of_accounts):
         :param input_file: Ldap dumb file to parse
         :param number_of_accounts: Number of accounts to fix
     """
-    process_ldap_problems.fix_wrong_format(input_file, logger=LOGGER,
-                                           number_of_accounts=number_of_accounts)
+    fix_wrong_format.fix_wrong_format(input_file, logger=LOGGER,
+                                      number_of_accounts=number_of_accounts)
 
 
 if __name__ == '__main__':
