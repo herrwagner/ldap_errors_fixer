@@ -1,7 +1,6 @@
 
 import re
 import gzip
-
 import ldap_parser
 
 
@@ -31,7 +30,7 @@ class PatternHandlerRegEx(PatternHandler):
 class PatternHandlerString(PatternHandler):
     def __init__(self, pattern_dict):
         super().__init__(pattern_dict)
-        self.pattern = re.compile(pattern_dict['value'])
+        self.pattern = pattern_dict['value']
 
     def execute(self, value):
         return self.pattern == value
@@ -64,7 +63,7 @@ class ProblemsDetector:
                 return
         else:
             for field in entry:
-                if field == 'dn' or not self.handler.check_field(field):
+                if field == 'dn' or self.handler.check_field(field) is False:
                     continue
                 for value in entry[field]:
                     try:
@@ -72,12 +71,13 @@ class ProblemsDetector:
                     except UnicodeDecodeError:
                         continue
                     try:
-                        wrong_field = self.handler.execute(decode_value)
+                        if self.handler.execute(decode_value) is False:
+                            continue
                     except IndexError:
                         continue
                     else:
                         self.logger.debug('Address {} has wrong field: {}: {}'.format(address, field,
-                                                                                      wrong_field))
+                                                                                      decode_value))
                         self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
 
 
