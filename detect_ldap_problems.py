@@ -4,8 +4,6 @@ import gzip
 
 import ldap_parser
 
-#_RE_WRONG = re.compile(r'[0-9,a-z,A-Z,.,@]+\,.*$')
-
 
 class PatternHandler:
     def __init__(self, pattern_dict: dict):
@@ -13,6 +11,12 @@ class PatternHandler:
 
     def execute(self, value):
         pass
+
+    def check_field(self, field):
+        if self.pattern_dict['field'] == 'All' or self.pattern_dict['field'] == field:
+            return True
+        else:
+            return False
 
 
 class PatternHandlerRegEx(PatternHandler):
@@ -38,7 +42,7 @@ class PatternHandlerFactory:
         self.pattern_dict = pattern_dict
 
     def factory(self):
-        if self.pattern_dict['regex'] == True:
+        if self.pattern_dict['regex']:
             return PatternHandlerRegEx(self.pattern_dict)
         else:
             return PatternHandlerString(self.pattern_dict)
@@ -60,7 +64,7 @@ class ProblemsDetector:
                 return
         else:
             for field in entry:
-                if field == 'dn':
+                if field == 'dn' or not self.handler.check_field(field):
                     continue
                 for value in entry[field]:
                     try:
