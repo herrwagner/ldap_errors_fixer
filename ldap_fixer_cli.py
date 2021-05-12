@@ -4,7 +4,7 @@ import sys
 import click
 import check_submit_lock
 import delete_old_entries
-import process_ldap_problems
+import detect_ldap_problems
 import fix_wrong_format
 import logging
 from logging.handlers import SysLogHandler
@@ -71,9 +71,9 @@ def detect_wrong_format(input_file, pattern, reg_ex):
     #    LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
     #    sys.exit(1)
     #else:
-    #    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
-    #                                              pattern=pattern, reg_ex=reg_ex)
-    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
+    #    detect_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
+    #                                             pattern=pattern, reg_ex=reg_ex)
+    detect_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
 
 
 @cli.command()

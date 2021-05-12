@@ -25,7 +25,10 @@ class ProblemsDetector:
                 if field == 'dn':
                     continue
                 for value in entry[field]:
-                    decode_value = value.decode("utf-8")
+                    try:
+                        decode_value = value.decode("utf-8")
+                    except UnicodeDecodeError:
+                        continue
                     try:
                         wrong_field = _RE_WRONG.findall(decode_value)[0]
                     except IndexError:
