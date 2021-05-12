@@ -11,8 +11,8 @@ from logging.handlers import SysLogHandler
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
 
-#handler = logging.StreamHandler(sys.stdout)
-handler = SysLogHandler('/dev/log')
+handler = logging.StreamHandler(sys.stdout)
+#handler = SysLogHandler('/dev/log')
 handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
@@ -63,16 +63,15 @@ def detect_wrong_format(input_file, pattern, reg_ex):
         :param pattern: Pattern to be detected
         :param reg_ex: Regular expression to be detected
     """
-    #if pattern is None and reg_ex is None:
-    #    LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
-    #    sys.exit(1)
-    #elif pattern is not None and reg_ex is not None:
-    #    LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
-    #    sys.exit(1)
-    #else:
-    #    process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
-    #                                              pattern=pattern,
-    #                                              reg_ex=reg_ex)
+    if pattern is None and reg_ex is None:
+        LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
+        sys.exit(1)
+    elif pattern is not None and reg_ex is not None:
+        LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
+        sys.exit(1)
+    else:
+        process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
+                                                  pattern=pattern, reg_ex=reg_ex)
     process_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
 
 
