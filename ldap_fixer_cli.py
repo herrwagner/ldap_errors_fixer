@@ -2,12 +2,15 @@
 
 import sys
 import click
+import logging
+from logging.handlers import SysLogHandler
+
 import check_submit_lock
 import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
-import logging
-from logging.handlers import SysLogHandler
+from config_loader import load_config
+
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
@@ -56,24 +59,20 @@ def delete_submit_locks(input_file, limit_days_ago, number_of_accounts):
 
 @cli.command()
 @click.argument('input_file')
-@click.option('--pattern', default=None)
-@click.option('--reg_ex', default=None)
-def detect_wrong_format(input_file, pattern, reg_ex):
+@click.argument('pattern')
+def detect_wrong_format(input_file, pattern):
     """Delete entries in ldap older than limit_days_ago before today
         :param input_file: Ldap dumb file to parse
-        :param pattern: Pattern to be detected
-        :param reg_ex: Regular expression to be detected
+        :param pattern: Pattern to be detected, it must be defined in config.yml!
     """
-    #if pattern is None and reg_ex is None:
-    #    LOGGER.error("Both pattern and reg_ex are None! Introduce one of them")
-    #    sys.exit(1)
-    #elif pattern is not None and reg_ex is not None:
-    #    LOGGER.error("Both pattern and reg_ex are not None! Introduce only one of them")
-    #    sys.exit(1)
-    #else:
-    #    detect_ldap_problems.detect_wrong_format(input_file, logger=LOGGER,
-    #                                             pattern=pattern, reg_ex=reg_ex)
-    detect_ldap_problems.detect_wrong_format(input_file, logger=LOGGER)
+    cfg = load_config(logger=LOGGER)
+    try:
+        cfg[pattern]
+    except KeyError:
+        LOGGER.error("Pattern fot found in the config.yml file!")
+        sys.exit(1)
+    else:
+        detect_ldap_problems.detect_wrong_format(pattern, input_file, logger=LOGGER)
 
 
 @cli.command()

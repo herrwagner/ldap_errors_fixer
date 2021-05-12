@@ -1,0 +1,8 @@
+lock_submit:
+  field: lock
+  value: submit
+  regex: False
+wrong_comma:
+  field: All
+  value: '[0-9,a-z,A-Z,.,@]+\,.*$'
+  regex: True
