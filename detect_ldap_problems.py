@@ -38,7 +38,7 @@ class PatternHandlerFactory:
         self.pattern_dict = pattern_dict
 
     def factory(self):
-        if self.pattern_dict['regex'] is True:
+        if self.pattern_dict['regex'] == True:
             return PatternHandlerRegEx(self.pattern_dict)
         else:
             return PatternHandlerString(self.pattern_dict)

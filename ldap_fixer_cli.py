@@ -69,10 +69,10 @@ def detect_wrong_format(input_file, pattern):
     try:
         cfg[pattern]
     except KeyError:
-        LOGGER.error("Pattern fot found in the config.yml file!")
+        LOGGER.error("Pattern not found in the config.yml file!")
         sys.exit(1)
     else:
-        detect_ldap_problems.detect_wrong_format(pattern, input_file, logger=LOGGER)
+        detect_ldap_problems.detect_wrong_format(cfg[pattern], input_file, logger=LOGGER)
 
 
 @cli.command()
