@@ -89,8 +89,8 @@ def check_submit_locks(dump_file, logger):
         input_file = open(dump_file, 'rb')
 
     output_file = open('lock_submit_accounts.txt', 'w')
-    processing_object = DetectSubmitLock(output_file, mariadb_connection=open_mdb_connection(),
-                                         logger=logger)
+    processing_object = DetectSubmitLock(output_file, mariadb_connection=open_mdb_connection(logger),
+                        logger=logger)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
     parser.parse()
 
