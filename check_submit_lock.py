@@ -48,9 +48,6 @@ class DetectSubmitLock:
         self.logger = logger
 
     def process_entry(self, dn, entry):
-        self.logger.debug('Start processing of dn ' + dn)
-        self.logger.debug(entry)
-
         if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
             object_class = 'mailaccount'
             address = entry['cn'][0].decode("utf-8")

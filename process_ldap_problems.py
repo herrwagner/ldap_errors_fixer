@@ -13,8 +13,6 @@ class ProblemsDetector:
         self.logger = logger
 
     def process_entry(self, dn, entry):
-        self.logger.debug('Start processing of dn {}'.format(dn))
-        self.logger.debug('entry: {}'.format(entry))
         try:
             address = entry['cn'][0].decode("utf-8")
         except KeyError:
