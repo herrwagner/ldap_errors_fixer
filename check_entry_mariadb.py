@@ -42,7 +42,7 @@ def open_mdb_connection():
 def check_entry_mariadb(address, mariadb_connection, query):
     LOGGER.debug('Checking account: {}'.format(address))
     cursor = mariadb_connection.cursor()
-    query_string = str(query).format(MARIA_DB_CONFIGURATION['table'], address)
+    query_string = str(query).format(table=MARIA_DB_CONFIGURATION['table'], address=address)
     LOGGER.debug('Mariadb query: ' + query_string)
     mariadb_hits = cursor.execute(query_string)
 
