@@ -39,10 +39,10 @@ def open_mdb_connection():
                 raise DBError(err_str)
 
 
-def check_account_history(address, mariadb_connection):
+def check_entry_mariadb(address, mariadb_connection, query):
     LOGGER.debug('Checking account: {}'.format(address))
     cursor = mariadb_connection.cursor()
-    query_string = 'SELECT ts FROM {} WHERE account=\'{}\''.format(MARIA_DB_CONFIGURATION['table'], address)
+    query_string = str(query).format(MARIA_DB_CONFIGURATION['table'], address)
     LOGGER.debug('Mariadb query: ' + query_string)
     mariadb_hits = cursor.execute(query_string)
 

@@ -3,9 +3,7 @@ lock_submit:
   field: lock
   value: submit
   regex: False
-  dependencies:
-    mariadb:
-      query: SELECT ts FROM {table} WHERE account=\'{address}\'
+  mariadb_query: SELECT ts FROM {table} WHERE account=\'{address}\'
 wrong_comma:
   type: general
   field: All

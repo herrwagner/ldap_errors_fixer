@@ -1,7 +1,9 @@
 
+import sys
+
 from common import LOGGER
 from pattern_handler import PatternHandler
-from check_entry_mariadb import check_account_history
+from check_entry_mariadb import check_entry_mariadb
 
 
 class ProblemsDetector:
@@ -46,6 +48,11 @@ class SubmitLockDetector(ProblemsDetector):
     def __init__(self, output_file, handler: PatternHandler, mariadb_connection):
         super().__init__(output_file, handler)
         self.mariadb_connection = mariadb_connection
+        try:
+            self.query = self.handler.pattern_dict['mariadb_query']
+        except KeyError:
+            LOGGER.error('Provide a MariaDB query!')
+            sys.exit(1)
 
     def process_entry(self, dn, entry):
         if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
@@ -62,6 +69,6 @@ class SubmitLockDetector(ProblemsDetector):
             lock = entry['lock'][0].decode("utf-8")
             if lock == 'submit':
                 LOGGER.debug('Address {} has lock = submit!'.format(address, self.mariadb_connection))
-                locking_date = check_account_history(address, self.mariadb_connection)
+                locking_date = check_entry_mariadb(address, self.mariadb_connection, self.query)
                 self.output_file.write(address + ' ' + object_class + ' locking date in MariaDB: ' +
                                        locking_date + '\n')
