@@ -51,10 +51,10 @@ class DetectSubmitLock:
             object_class = 'mailaccount'
             address = entry['cn'][0].decode("utf-8")
             if 'forwardto' in entry:
-                LOGGER.debug('Skipping alias account {}'.format(address))
+                #LOGGER.debug('Skipping alias account {}'.format(address))
                 return
         else:
-            LOGGER.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
+            #LOGGER.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
             return
 
         if 'lock' in entry:
