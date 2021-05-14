@@ -1,13 +1,13 @@
 lock_submit:
+  type: lock_submit
   field: lock
   value: submit
   regex: False
   dependencies:
     mariadb:
       query: SELECT ts FROM {table} WHERE account=\'{address}\'
-  exclude:
-    type: alias
 wrong_comma:
+  type: general
   field: All
   value: '[0-9,a-z,A-Z,.,@]+\,.*$'
   regex: True

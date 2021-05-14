@@ -4,7 +4,7 @@ import sys
 import click
 
 
-import check_submit_lock
+import check_entry_mariadb
 import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
@@ -24,7 +24,7 @@ def check_submit_locks(input_file):
     """check submit locks in the dumb file
         :param input_file: Ldap dumb file to parse
     """
-    check_submit_lock.check_submit_locks(input_file)
+    check_entry_mariadb.check_submit_locks(input_file)
 
 
 @cli.command()
