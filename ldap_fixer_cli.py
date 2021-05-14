@@ -20,15 +20,6 @@ def cli():
 
 @cli.command()
 @click.argument('input_file')
-def check_submit_locks(input_file):
-    """check submit locks in the dumb file
-        :param input_file: Ldap dumb file to parse
-    """
-    check_entry_mariadb.check_submit_locks(input_file)
-
-
-@cli.command()
-@click.argument('input_file')
 @click.option('--limit_days_ago', default=None)
 @click.option('--number_of_accounts', default=10)
 def delete_submit_locks(input_file, limit_days_ago, number_of_accounts):
