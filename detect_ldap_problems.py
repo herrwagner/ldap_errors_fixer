@@ -13,8 +13,19 @@ class PatternHandler:
     def execute(self, value):
         pass
 
+    def is_all_not_excluded(self, field):
+        if self.pattern_dict['field'] == 'All':
+            try:
+                exclude = self.pattern_dict['exclude']['field']
+            except KeyError:
+                return True
+            else:
+                return exclude != field
+        else:
+            return False
+
     def check_field(self, field):
-        if self.pattern_dict['field'] == 'All' or self.pattern_dict['field'] == field:
+        if self.is_all_not_excluded(field) or self.pattern_dict['field'] == field:
             return True
         else:
             return False
@@ -64,7 +75,7 @@ class ProblemsDetector:
                 return
         else:
             for field in entry:
-                if field == 'dn' or self.handler.check_field(field) is False:
+                if self.handler.check_field(field) is False:
                     continue
                 for value in entry[field]:
                     try:
@@ -78,7 +89,7 @@ class ProblemsDetector:
                         continue
                     else:
                         LOGGER.debug('Address {} has wrong field: {}: {}'.format(address, field,
-                                                                                      decode_value))
+                                                                                 decode_value))
                         self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
 
 

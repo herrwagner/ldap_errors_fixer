@@ -35,6 +35,7 @@ MARIA_DB_CONFIGURATION = {
     'password': 'headscarf-cure-prodigal-crestless-stiffly-job',
 }
 
+
 def split_address(address: str) -> (str, str):
     try:
         return address.split('@')
