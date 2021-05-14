@@ -3,7 +3,7 @@ from fn_pymapi.errors import PymapiError
 from common import *
 
 
-def fix_wrong_format(input_file, logger, number_of_accounts):
+def fix_wrong_format(input_file, number_of_accounts):
     with open(input_file, 'r') as f:
         lines = f.readlines()
     with open(input_file, "w") as f:
@@ -17,11 +17,11 @@ def fix_wrong_format(input_file, logger, number_of_accounts):
                 address = line.split(' ')[0]
                 parameter = line.split(' ')[1]
                 parameter = parameter.replace(':', '')
-                logger.debug('Fixing parameter {} from account {}'.format(parameter, address))
+                LOGGER.debug('Fixing parameter {} from account {}'.format(parameter, address))
                 try:
                     route = address_route(address)
                 except ValueError as err:
-                    logger.error('ERROR: {}'.format(err))
+                    LOGGER.error('ERROR: {}'.format(err))
                     return
                 # Get the data from the parameter from LDAP insteod of the file to be sure that
                 # is still broken
@@ -33,7 +33,7 @@ def fix_wrong_format(input_file, logger, number_of_accounts):
                 else:
                     data = ret.json()['data']
                     if parameter not in data:
-                        logger.warning('Address {} does not have parameter {}!'.format(address, parameter))
+                        LOGGER.warning('Address {} does not have parameter {}!'.format(address, parameter))
                         continue
                 broken_value = data[parameter]
                 payload = dict()
@@ -41,17 +41,17 @@ def fix_wrong_format(input_file, logger, number_of_accounts):
                 try:
                     pmapi_client.make_request('patch', route, payload=payload)
                 except PymapiError as err:
-                    logger.error('PMAPI error: {}'.format(err))
+                    LOGGER.error('PMAPI error: {}'.format(err))
                     error = True
                     continue
                 else:
-                    logger.debug('Parameter {} was cleaned for address {}'.format(parameter, address))
+                    LOGGER.debug('Parameter {} was cleaned for address {}'.format(parameter, address))
                 payload[parameter] = broken_value
                 try:
                     pmapi_client.make_request('patch', route, payload=payload)
                 except PymapiError as err:
-                    logger.error('PMAPI error: {}'.format(err))
+                    LOGGER.error('PMAPI error: {}'.format(err))
                     error = True
                     continue
                 else:
-                    logger.debug('Parameter {} was modified for address {}'.format(parameter, address))
+                    LOGGER.debug('Parameter {} was modified for address {}'.format(parameter, address))

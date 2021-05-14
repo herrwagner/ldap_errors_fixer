@@ -1,5 +1,21 @@
 
+import sys
+import logging
+from logging.handlers import SysLogHandler
 from fn_pymapi import MapiClient
+
+
+#Logger
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stdout)
+#handler = SysLogHandler('/dev/log')
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+LOGGER.addHandler(handler)
+
 
 # credentials:
 PMAPI_USER = 'admin'

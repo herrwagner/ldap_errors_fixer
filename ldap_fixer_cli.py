@@ -2,25 +2,14 @@
 
 import sys
 import click
-import logging
-from logging.handlers import SysLogHandler
+
 
 import check_submit_lock
 import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
 from config_loader import load_config
-
-
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.DEBUG)
-
-handler = logging.StreamHandler(sys.stdout)
-#handler = SysLogHandler('/dev/log')
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-LOGGER.addHandler(handler)
+from common import LOGGER
 
 
 @click.group()
@@ -35,7 +24,7 @@ def check_submit_locks(input_file):
     """check submit locks in the dumb file
         :param input_file: Ldap dumb file to parse
     """
-    check_submit_lock.check_submit_locks(input_file, logger=LOGGER)
+    check_submit_lock.check_submit_locks(input_file)
 
 
 @cli.command()
@@ -52,8 +41,7 @@ def delete_submit_locks(input_file, limit_days_ago, number_of_accounts):
         LOGGER.error("Limit number of accounts is: {} (greater than 1000). "
                      "Not allowed!".format(number_of_accounts))
         sys.exit(1)
-    delete_old_entries.delete_old_entries(input_file, logger=LOGGER,
-                                          number_of_accounts=number_of_accounts,
+    delete_old_entries.delete_old_entries(input_file, number_of_accounts=number_of_accounts,
                                           limit_days_ago=limit_days_ago)
 
 
@@ -65,14 +53,14 @@ def detect_wrong_format(input_file, pattern):
         :param input_file: Ldap dumb file to parse
         :param pattern: Pattern to be detected, it must be defined in config.yml!
     """
-    cfg = load_config(logger=LOGGER)
+    cfg = load_config()
     try:
         cfg[pattern]
     except KeyError:
         LOGGER.error("Pattern not found in the config.yml file!")
         sys.exit(1)
     else:
-        detect_ldap_problems.detect_wrong_format(cfg[pattern], input_file, logger=LOGGER)
+        detect_ldap_problems.detect_wrong_format(cfg[pattern], input_file)
 
 
 @cli.command()
@@ -83,8 +71,7 @@ def fix_wrong_format(input_file, number_of_accounts):
         :param input_file: Ldap dumb file to parse
         :param number_of_accounts: Number of accounts to fix
     """
-    fix_wrong_format.fix_wrong_format(input_file, logger=LOGGER,
-                                      number_of_accounts=number_of_accounts)
+    fix_wrong_format.fix_wrong_format(input_file, number_of_accounts=number_of_accounts)
 
 
 if __name__ == '__main__':

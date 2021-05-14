@@ -3,6 +3,8 @@ import re
 import gzip
 import ldap_parser
 
+from common import LOGGER
+
 
 class PatternHandler:
     def __init__(self, pattern_dict: dict):
@@ -48,9 +50,8 @@ class PatternHandlerFactory:
 
 
 class ProblemsDetector:
-    def __init__(self, output_file, handler: PatternHandler, logger):
+    def __init__(self, output_file, handler: PatternHandler):
         self.output_file = output_file
-        self.logger = logger
         self.handler = handler
 
     def process_entry(self, dn, entry):
@@ -76,12 +77,12 @@ class ProblemsDetector:
                     except IndexError:
                         continue
                     else:
-                        self.logger.debug('Address {} has wrong field: {}: {}'.format(address, field,
+                        LOGGER.debug('Address {} has wrong field: {}: {}'.format(address, field,
                                                                                       decode_value))
                         self.output_file.write(address + ' ' + field + ': ' + decode_value + '\n')
 
 
-def detect_wrong_format(pattern_dict: dict, dump_file, logger):
+def detect_wrong_format(pattern_dict: dict, dump_file):
     handler = PatternHandlerFactory(pattern_dict).factory()
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
@@ -89,6 +90,6 @@ def detect_wrong_format(pattern_dict: dict, dump_file, logger):
         input_file = open(dump_file, 'rb')
 
     output_file = open('ldap_wrong_format.txt', 'w')
-    processing_object = ProblemsDetector(output_file, handler, logger=logger)
+    processing_object = ProblemsDetector(output_file, handler)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
     parser.parse()
