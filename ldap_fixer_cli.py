@@ -68,12 +68,15 @@ def fix_wrong_format(input_file, number_of_accounts):
 @cli.command()
 @click.argument('input_file')
 @click.option('--number_of_accounts', default=None)
-def update_password_fields(input_file, number_of_accounts):
+@click.option('--first_account', default=0)
+def update_password_fields(input_file, number_of_accounts, first_account):
     """Updates password fields in ldap using requests to PMAPI
         :param input_file: Ldap dumb file to parse
         :param number_of_accounts: Number of accounts to update
+        :param first_account: First account in the dump file to start updating
     """
-    update_password_fields.update(input_file, number_of_accounts=number_of_accounts)
+    update_password_fields.update(input_file, number_of_accounts=number_of_accounts,
+                                  first_account=first_account)
 
 
 if __name__ == '__main__':
