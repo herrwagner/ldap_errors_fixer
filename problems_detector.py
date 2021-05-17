@@ -32,7 +32,7 @@ class ProblemsDetectorGeneral(ProblemsDetector):
                     try:
                         decode_value = value.decode("utf-8")
                     except UnicodeDecodeError:
-                        continue
+                        decode_value = value.decode('latin-1')
                     try:
                         if self.handler.execute(decode_value) is False:
                             continue

@@ -25,7 +25,10 @@ class PasswordUpdater:
         if 'userpassword' not in entry:
             return
         payload = dict()
-        payload['userpassword'] = entry['userpassword'][0].decode()
+        try:
+            payload['userpassword'] = entry['userpassword'][0].decode('utf-8')
+        except UnicodeDecodeError:
+            payload['userpassword'] = entry['userpassword'][0].decode('latin-1')
         if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
             route = address_route(address)
         elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
