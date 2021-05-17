@@ -1,9 +1,9 @@
 
 import sys
 import gzip
-import ldap_parser
 
 from common import LOGGER
+import ldap_parser
 from pattern_handler import PatternHandlerFactory
 from problems_detector import *
 from check_entry_mariadb import open_mdb_connection

@@ -59,10 +59,21 @@ def detect_wrong_format(input_file, pattern):
 @click.option('--number_of_accounts', default=10)
 def fix_wrong_format(input_file, number_of_accounts):
     """Delete entries in ldap older than limit_days_ago before today
-        :param input_file: Ldap dumb file to parse
+        :param input_file: File with the broken accounts ()
         :param number_of_accounts: Number of accounts to fix
     """
     fix_wrong_format.fix_wrong_format(input_file, number_of_accounts=number_of_accounts)
+
+
+@cli.command()
+@click.argument('input_file')
+@click.option('--number_of_accounts', default=None)
+def update_password_fields(input_file, number_of_accounts):
+    """Updates password fields in ldap using requests to PMAPI
+        :param input_file: Ldap dumb file to parse
+        :param number_of_accounts: Number of accounts to update
+    """
+    update_password_fields.update(input_file, number_of_accounts=number_of_accounts)
 
 
 if __name__ == '__main__':

@@ -49,3 +49,15 @@ def address_route(address: str):
     except ValueError as err:
         raise err
     return 'domains/{}/localparts/{}'.format(domain, localpart)
+
+
+def domain_route(domain: str):
+    return 'domains/{}'.format(domain)
+
+
+def mailing_list_route(address: str):
+    try:
+        mailinglist, domain = split_address(address)
+    except ValueError as err:
+        raise err
+    return 'domains/{}/mailinglists/{}'.format(domain, mailinglist)
