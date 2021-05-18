@@ -47,6 +47,26 @@ class PasswordUpdater:
         self.actual_account += 1
 
 
+class PasswordDetector:
+    def __init__(self, output_file):
+        self.output_file = output_file
+
+    def process_entry(self, dn, entry):
+        if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
+            object_class = 'mailaccount'
+            address = entry['cn'][0].decode("utf-8")
+        else:
+            return
+        absent_passwords = list()
+        if 'userPasswordSsha512' not in entry:
+            absent_passwords.append('userPasswordSsha512')
+        if 'userPasswordPdkdf2' not in entry:
+            absent_passwords.append('userPasswordPdkdf2')
+        if len(absent_passwords) > 0:
+            LOGGER.debug('Address {} does not have password: {}'.format(address, absent_passwords))
+            self.output_file.write('Address {} does not have password: {}'.format(address, absent_passwords))
+
+
 def update(dump_file, number_of_accounts=None, first_account=0):
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
@@ -54,5 +74,17 @@ def update(dump_file, number_of_accounts=None, first_account=0):
         input_file = open(dump_file, 'rb')
 
     processing_object = PasswordUpdater(number_of_accounts, first_account)
+    parser = ldap_parser.ParseLDIF(input_file, processing_object)
+    parser.parse()
+
+
+def detect(dump_file):
+    if dump_file.endswith('.gz'):
+        input_file = gzip.open(dump_file, 'rb')
+    else:
+        input_file = open(dump_file, 'rb')
+
+    output_file = open('address_absent_password.txt', 'w')
+    processing_object = PasswordDetector(output_file)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
     parser.parse()
