@@ -67,23 +67,23 @@ class PasswordDetector:
             self.output_file.write('Address {} does not have password: {}'.format(address, absent_passwords))
 
 
-def update(dump_file, number_of_accounts=None, first_account=0):
+def open_file(dump_file):
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
     else:
         input_file = open(dump_file, 'rb')
+    return input_file
 
+
+def update(dump_file, number_of_accounts=None, first_account=0):
+    input_file = open_file(dump_file)
     processing_object = PasswordUpdater(number_of_accounts, first_account)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
     parser.parse()
 
 
 def detect(dump_file):
-    if dump_file.endswith('.gz'):
-        input_file = gzip.open(dump_file, 'rb')
-    else:
-        input_file = open(dump_file, 'rb')
-
+    input_file = open_file(dump_file)
     output_file = open('address_absent_password.txt', 'w')
     processing_object = PasswordDetector(output_file)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
