@@ -1,11 +1,13 @@
 
 import re
+from abc import ABC, abstractmethod
 
 
-class PatternHandler:
+class PatternHandler(ABC):
     def __init__(self, pattern_dict: dict):
         self.pattern_dict = pattern_dict
 
+    @abstractmethod
     def execute(self, value):
         pass
 
@@ -45,13 +47,26 @@ class PatternHandlerString(PatternHandler):
         return self.pattern == value
 
 
-class PatternHandlerFactory:
+class PatternHandlerFactory(ABC):
     def __init__(self, pattern_dict):
         self.pattern_dict = pattern_dict
 
+    @abstractmethod
     def factory(self):
-        if self.pattern_dict['regex']:
-            return PatternHandlerRegEx(self.pattern_dict)
-        else:
-            return PatternHandlerString(self.pattern_dict)
+        pass
 
+
+class PatternHandlerFactoryRegEx(PatternHandlerFactory):
+    def __init__(self, pattern_dict):
+        super().__init__(pattern_dict)
+
+    def factory(self) -> PatternHandler:
+        return PatternHandlerRegEx(self.pattern_dict)
+
+
+class PatternHandlerFactoryPattern(PatternHandlerFactory):
+    def __init__(self, pattern_dict):
+        super().__init__(pattern_dict)
+
+    def factory(self) -> PatternHandler:
+        return PatternHandlerString(self.pattern_dict)
