@@ -1,9 +1,9 @@
 
 import re
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 
-class PatternHandler(ABC):
+class PatternHandler:
     def __init__(self, pattern_dict: dict):
         self.pattern_dict = pattern_dict
 
@@ -47,7 +47,7 @@ class PatternHandlerString(PatternHandler):
         return self.pattern == value
 
 
-class PatternHandlerFactory(ABC):
+class PatternHandlerFactory:
     def __init__(self, pattern_dict):
         self.pattern_dict = pattern_dict
 

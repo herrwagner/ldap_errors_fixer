@@ -4,7 +4,7 @@ import gzip
 
 from common import LOGGER
 import ldap_parser
-from pattern_handler import PatternHandlerFactory
+from pattern_handler import PatternHandlerFactoryRegEx, PatternHandlerFactoryPattern
 from problems_detector import *
 from check_entry_mariadb import open_mdb_connection
 
@@ -26,7 +26,7 @@ def detect_wrong_format(pattern_dict: dict, dump_file):
         LOGGER.error("Introduce a type in the configuration file!")
         sys.exit(1)
 
-    handler = PatternHandlerFactory(pattern_dict).factory()
+    handler = PatternHandlerFactoryRegEx(pattern_dict).factory()
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
     else:
