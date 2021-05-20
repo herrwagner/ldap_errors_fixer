@@ -2,18 +2,18 @@
 import sys
 
 from common import LOGGER
-from pattern_handler import PatternHandler
+from pattern_handler import PatternHandlerFactory
 from check_entry_mariadb import check_entry_mariadb
 
 
 class ProblemsDetector:
-    def __init__(self, output_file, handler: PatternHandler):
+    def __init__(self, output_file, handler: PatternHandlerFactory):
         self.output_file = output_file
-        self.handler = handler
+        self.handler = handler.factory()
 
 
 class ProblemsDetectorGeneral(ProblemsDetector):
-    def __init__(self, output_file, handler: PatternHandler):
+    def __init__(self, output_file, handler: PatternHandlerFactory):
         super().__init__(output_file, handler)
 
     def process_entry(self, dn, entry):
@@ -45,7 +45,7 @@ class ProblemsDetectorGeneral(ProblemsDetector):
 
 
 class SubmitLockDetector(ProblemsDetector):
-    def __init__(self, output_file, handler: PatternHandler, mariadb_connection):
+    def __init__(self, output_file, handler: PatternHandlerFactory, mariadb_connection):
         super().__init__(output_file, handler)
         self.mariadb_connection = mariadb_connection
         try:

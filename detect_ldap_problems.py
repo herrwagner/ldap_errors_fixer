@@ -25,8 +25,17 @@ def detect_wrong_format(pattern_dict: dict, dump_file):
     except KeyError:
         LOGGER.error("Introduce a type in the configuration file!")
         sys.exit(1)
+    try:
+        regex = pattern_dict['regex']
+    except KeyError:
+        LOGGER.error("Introduce if the pattern is a regex in the configuration file!")
+        sys.exit(1)
 
-    handler = PatternHandlerFactoryRegEx(pattern_dict).factory()
+    if regex:
+        handler = PatternHandlerFactoryRegEx(pattern_dict)
+    else:
+        handler = PatternHandlerFactoryPattern(pattern_dict)
+
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
     else:
