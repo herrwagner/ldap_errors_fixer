@@ -8,6 +8,7 @@ import check_entry_mariadb
 import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
+import update_password_fields
 from config_loader import load_config
 from common import LOGGER
 
