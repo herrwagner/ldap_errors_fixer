@@ -48,10 +48,10 @@ class PasswordUpdater:
             payload['userpasswordpdkdf2'] = self.pbkdf2(user_password)
             if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
                 route = address_route(address)
-            elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
-                route = domain_route(address)
-            elif entry['objectClass'][-1].decode("utf-8") == 'mailinglist':
-                route = mailing_list_route(address)
+            #elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
+            #    route = domain_route(address)
+            #elif entry['objectClass'][-1].decode("utf-8") == 'mailinglist':
+            #    route = mailing_list_route(address)
             else:
                 return
             try:
