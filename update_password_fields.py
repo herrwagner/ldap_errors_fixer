@@ -1,10 +1,25 @@
 
 import sys
 import gzip
+import hashlib
+from base64 import b64encode
 
 from fn_pymapi.errors import PymapiError
 import ldap_parser
 from common import *
+
+
+def generate_salt(nbytes):
+    with open("/dev/urandom", "rb") as rand:
+        return rand.read(nbytes)
+    # this will start working in python 3.6
+    # return secrets.token_bytes(nbytes)
+
+
+def _cut_base64_padding(byte_str):
+    while byte_str.endswith(b'='):
+        byte_str = byte_str[:-1]
+    return byte_str
 
 
 class PasswordUpdater:
@@ -26,9 +41,11 @@ class PasswordUpdater:
                 return
             payload = dict()
             try:
-                payload['userpassword'] = entry['userpassword'][0].decode('utf-8')
+                user_password = entry['userpassword'][0].decode('utf-8')
             except UnicodeDecodeError:
-                payload['userpassword'] = entry['userpassword'][0].decode('latin-1')
+                user_password = entry['userpassword'][0].decode('latin-1')
+            payload['userpasswordssha512'] = self.salted_sha512_pw(user_password)
+            payload['userpasswordpdkdf2'] = self.pbkdf2(user_password)
             if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
                 route = address_route(address)
             elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
@@ -45,6 +62,29 @@ class PasswordUpdater:
             else:
                 LOGGER.debug('Password fields were modified for account {}'.format(address))
         self.actual_account += 1
+
+    @staticmethod
+    def pbkdf2(pwd, salt=None, rounds=10000):
+        if isinstance(pwd, str):
+            pwd = pwd.encode()
+        if not salt:
+            salt = generate_salt(16)
+        hpw = '{PBKDF2-SHA512}'
+        hpw += str(rounds)
+        hpw += '$' + _cut_base64_padding(b64encode(salt)).decode()
+        hpw += '$' + _cut_base64_padding(b64encode(hashlib.pbkdf2_hmac('sha512', pwd, salt, rounds))).decode()
+        return hpw
+
+    @staticmethod
+    def salted_sha512_pw(pwd, salt=None):
+        if isinstance(pwd, str):
+            pwd = pwd.encode()
+        salt_len = 8
+        if not salt:
+            salt = generate_salt(salt_len)
+        hpw = '{SSHA512}'
+        hpw += b64encode(hashlib.sha512(pwd + salt).digest() + salt).decode()
+        return hpw
 
 
 class PasswordDetector:
