@@ -7,7 +7,7 @@ from fn_pymapi import MapiClient
 
 #Logger
 LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.DEBUG)
+LOGGER.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
 #handler = SysLogHandler('/dev/log')

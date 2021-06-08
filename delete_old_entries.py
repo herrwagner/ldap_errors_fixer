@@ -29,11 +29,11 @@ def delete_old_entries(input_file, number_of_accounts: int = 10, limit_days_ago=
                 delete_counter += 1
                 address = line.split(' ')[0]
                 mariaDB_history_entry = line.split('MariaDB: ')[1]
-                LOGGER.debug('Checking account {} with MariaDB history entry {}'.format(address, mariaDB_history_entry))
+                LOGGER.info('Checking account {} with MariaDB history entry {}'.format(address, mariaDB_history_entry))
                 if mariaDB_history_entry.strip() != 'Not found':
                     if limit_days_ago is None or check_if_is_older(mariaDB_history_entry, int(limit_days_ago)) is False:
                         continue
-                LOGGER.debug('Proceeding to remove lock for account {}'.format(address))
+                LOGGER.info('Proceeding to remove lock for account {}'.format(address))
 
                 try:
                     route = address_route(address)
@@ -59,4 +59,4 @@ def delete_old_entries(input_file, number_of_accounts: int = 10, limit_days_ago=
                     LOGGER.error('PMAPI error: {}'.format(err))
                     sys.exit(1)
                 else:
-                    LOGGER.debug('Lock -> Submit was deleted for account {}'.format(address))
+                    LOGGER.info('Lock -> Submit was deleted for account {}'.format(address))
