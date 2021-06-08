@@ -17,13 +17,13 @@ def check_if_is_older(mariaDB_history_entry, limit_days_ago):
         return False
 
 
-def delete_old_entries(input_file, number_of_accounts: int = 10, limit_days_ago=None):
+def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None):
     with open(input_file, 'r') as f:
         lines = f.readlines()
     with open(input_file, "w") as f:
         delete_counter = 0
         for line in lines:
-            if delete_counter >= number_of_accounts:
+            if number_of_accounts is not None and delete_counter >= int(number_of_accounts):
                 f.write(line)
             else:
                 delete_counter += 1
