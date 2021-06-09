@@ -33,7 +33,7 @@ def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None)
                 if mariaDB_history_entry.strip() != 'Not found':
                     if limit_days_ago is None or check_if_is_older(mariaDB_history_entry, int(limit_days_ago)) is False:
                         continue
-                LOGGER.info('Proceeding to remove lock for account {}'.format(address))
+                LOGGER.info('Proceeding to add lock for account {}'.format(address))
 
                 try:
                     route = address_route(address)
@@ -52,11 +52,11 @@ def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None)
                         LOGGER.warning('Address {} is an alias account!'.format(address))
                         continue
                 payload = dict()
-                payload['lock'] = ""
+                payload['lock'] = "submit"
                 try:
                     pmapi_client.make_request('patch', route, payload=payload)
                 except PymapiError as err:
                     LOGGER.error('PMAPI error: {}'.format(err))
                     sys.exit(1)
                 else:
-                    LOGGER.info('Lock -> Submit was deleted for account {}'.format(address))
+                    LOGGER.info('Lock -> Submit was added for account {}'.format(address))
