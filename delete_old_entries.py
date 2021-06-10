@@ -1,5 +1,6 @@
 
 import sys
+import re
 from datetime import datetime, timedelta
 
 from fn_pymapi.errors import PymapiError
@@ -18,9 +19,11 @@ def check_if_is_older(mariaDB_history_entry, limit_days_ago):
 
 
 def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None):
+    accounts_deleted_file = re.sub(r'\..*', '', input_file)
+    accounts_deleted_file += '_deleted_accounts.txt'
     with open(input_file, 'r') as f:
         lines = f.readlines()
-    with open(input_file, "w") as f:
+    with open(input_file, "w") as f, open(accounts_deleted_file, 'w') as b:
         delete_counter = 0
         for line in lines:
             if number_of_accounts is not None and delete_counter >= int(number_of_accounts):
@@ -33,7 +36,7 @@ def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None)
                 if mariaDB_history_entry.strip() != 'Not found':
                     if limit_days_ago is None or check_if_is_older(mariaDB_history_entry, int(limit_days_ago)) is False:
                         continue
-                LOGGER.info('Proceeding to add lock for account {}'.format(address))
+                LOGGER.info('Proceeding to remove lock for account {}'.format(address))
 
                 try:
                     route = address_route(address)
@@ -52,11 +55,12 @@ def delete_old_entries(input_file, number_of_accounts=None, limit_days_ago=None)
                         LOGGER.warning('Address {} is an alias account!'.format(address))
                         continue
                 payload = dict()
-                payload['lock'] = "submit"
+                payload['lock'] = ""
                 try:
                     pmapi_client.make_request('patch', route, payload=payload)
                 except PymapiError as err:
                     LOGGER.error('PMAPI error: {}'.format(err))
                     sys.exit(1)
                 else:
-                    LOGGER.info('Lock -> Submit was added for account {}'.format(address))
+                    LOGGER.info('Lock -> Submit was deleted for account {}'.format(address))
+                    b.write(line)
