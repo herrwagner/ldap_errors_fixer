@@ -1,6 +1,7 @@
 
 import sys
 import logging
+import re
 from logging.handlers import SysLogHandler
 from fn_pymapi import MapiClient
 
@@ -61,3 +62,14 @@ def mailing_list_route(address: str):
     except ValueError as err:
         raise err
     return 'domains/{}/mailinglists/{}'.format(domain, mailinglist)
+
+
+def remove_01019(addr):
+    if not addr:
+        return addr
+    return re.sub(
+        r'@01019freenet\.de$',
+        '@freenet.de',
+        addr,
+        flags=re.IGNORECASE,
+    )
