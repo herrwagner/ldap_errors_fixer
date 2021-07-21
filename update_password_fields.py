@@ -27,40 +27,44 @@ class PasswordUpdater:
         self.number_of_accounts = int(number_of_accounts) if number_of_accounts is not None else None
         self.actual_account = 0
         self.first_account = int(first_account)
+        self.tracking_file = 'password_modified_accounts.txt'
 
     def process_entry(self, dn, entry):
         if self.actual_account >= self.first_account:
             if self.number_of_accounts is not None and self.actual_account >= \
                     self.number_of_accounts + self.first_account:
                 sys.exit(0)
-            try:
-                address = entry['cn'][0].decode("utf-8")
-            except KeyError:
-                return
-            if 'userpassword' not in entry:
-                return
-            payload = dict()
-            try:
-                user_password = entry['userpassword'][0].decode('utf-8')
-            except UnicodeDecodeError:
-                user_password = entry['userpassword'][0].decode('latin-1')
-            payload['userpasswordssha512'] = self.salted_sha512_pw(user_password)
-            payload['userpasswordpdkdf2'] = self.pbkdf2(user_password)
-            if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
-                route = address_route(address)
-            #elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
-            #    route = domain_route(address)
-            #elif entry['objectClass'][-1].decode("utf-8") == 'mailinglist':
-            #    route = mailing_list_route(address)
-            else:
-                return
-            try:
-                pmapi_client.make_request('patch', route, payload=payload)
-            except PymapiError as err:
-                LOGGER.error('PMAPI error: {}'.format(err))
-                sys.exit(1)
-            else:
-                LOGGER.debug('Password fields were modified for account {}'.format(address))
+            with open(self.tracking_file, 'w') as tf:
+                try:
+                    address = entry['cn'][0].decode("utf-8")
+                except KeyError:
+                    return
+                if 'userpassword' not in entry:
+                    return
+                payload = dict()
+                try:
+                    user_password = entry['userpassword'][0].decode('utf-8')
+                except UnicodeDecodeError:
+                    user_password = entry['userpassword'][0].decode('latin-1')
+                payload['userpasswordssha512'] = self.salted_sha512_pw(user_password)
+                payload['userpasswordpdkdf2'] = self.pbkdf2(user_password)
+                if entry['objectClass'][-1].decode("utf-8") == 'mailaccount':
+                    route = address_route(address)
+                #elif entry['objectClass'][-1].decode("utf-8") == 'maildomain':
+                #    route = domain_route(address)
+                #elif entry['objectClass'][-1].decode("utf-8") == 'mailinglist':
+                #    route = mailing_list_route(address)
+                else:
+                    return
+                try:
+                    pmapi_client.make_request('patch', route, payload=payload)
+                except PymapiError as err:
+                    LOGGER.error('PMAPI error: {}'.format(err))
+                    sys.exit(1)
+                else:
+                    LOGGER.debug('Password fields were modified for account {}'.format(address))
+                    tf.write(address)
+                    tf.write("\n")
         self.actual_account += 1
 
     @staticmethod
