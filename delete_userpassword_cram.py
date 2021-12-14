@@ -6,6 +6,8 @@ from common import *
 from fn_pymapi.errors import PymapiError
 
 class UserPasswordCramDetector:
+    errors_file = 'errors_deleting_cram.txt'
+    ef = open(errors_file, 'w')
 
     def process_entry(self, dn, entry):
         try:
@@ -21,7 +23,7 @@ class UserPasswordCramDetector:
                 pmapi_client.make_request('patch', route, payload=payload)
             except PymapiError as err:
                 LOGGER.error('PMAPI error: {}'.format(err))
-                sys.exit(1)
+                self.ef.write(address)
             else:
                 LOGGER.info('userpasswordcram was deleted for account {}'.format(address))
 
