@@ -9,6 +9,7 @@ import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
 import update_password_fields
+import delete_userpassword_cram
 from config_loader import load_config
 from common import LOGGER
 
@@ -49,6 +50,15 @@ def detect_wrong_format(input_file, pattern):
         sys.exit(1)
     else:
         detect_ldap_problems.detect_wrong_format(cfg[pattern], input_file)
+
+
+@cli.command()
+@click.argument('input_file')
+def delete_user_password_cram(input_file):
+    """Delete userpasswordcram in ldap
+        :param input_file: Ldap dumb file to parse
+    """
+    delete_userpassword_cram.delete_userpassword_cram(input_file)
 
 
 @cli.command()
