@@ -7,5 +7,5 @@ class ParseLDIF(LDIFParser):
         LDIFParser.__init__(self, input_file)
         self.processing_object = processing_object
 
-    def handle(self, dn, entry):
+    def handle(self,dn, entry):
         self.processing_object.process_entry(dn, entry)
