@@ -52,6 +52,14 @@ def address_route(address: str):
     return 'domains/{}/localparts/{}'.format(domain, localpart)
 
 
+def address_field_route(address: str, field: str):
+    try:
+        localpart, domain = split_address(address)
+    except ValueError as err:
+        raise err
+    return 'domains/{}/localparts/{}/{}'.format(domain, localpart, field)
+
+
 def domain_route(domain: str):
     return 'domains/{}'.format(domain)
 

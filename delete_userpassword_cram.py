@@ -17,17 +17,15 @@ class UserPasswordCramDetector:
             return
         if 'userPasswordCram' in entry:
             LOGGER.info('Object {} has userpasswordcram! Deleting userpasswordcram...'.format(address))
-            payload = dict()
-            payload['userpasswordcram'] = ''
             try:
-                route = address_route(address)
+                route = address_field_route(address, 'userpasswordcram')
             except:
                 LOGGER.info('Account {} is not type mailbox. Skipped.'.format(address))
                 self.ef.write('Account {} is not type mailbox. Skipped.'.format(address))
                 self.ef.write('\n')
                 return
             try:
-                pmapi_client.make_request('patch', route, payload=payload)
+                pmapi_client.make_request('delete', route)
             except PymapiError as err:
                 LOGGER.error('PMAPI error: {}'.format(err))
                 self.ef.write(address)
