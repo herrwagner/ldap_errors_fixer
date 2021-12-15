@@ -5,6 +5,7 @@ import ldap_parser
 from common import *
 from fn_pymapi.errors import PymapiError
 
+
 class UserPasswordCramDetector:
     errors_file = 'errors_deleting_cram.txt'
     ef = open(errors_file, 'w')
@@ -17,13 +18,19 @@ class UserPasswordCramDetector:
         if 'userPasswordCram' in entry:
             LOGGER.info('Object {} has userpasswordcram! Deleting userpasswordcram...'.format(address))
             payload = dict()
-            payload['userpasswordcram'] = ""
-            try:
+            payload['userpasswordcram'] = ''
+            if payload['type'] == 'mailbox':
                 route = address_route(address)
+            else:
+                self.ef.write('Account {} is not type mailbox. Skipped.'.format(address))
+                self.ef.write('\n')
+                return
+            try:
                 pmapi_client.make_request('patch', route, payload=payload)
             except PymapiError as err:
                 LOGGER.error('PMAPI error: {}'.format(err))
                 self.ef.write(address)
+                self.ef.write('\n')
             else:
                 LOGGER.info('userpasswordcram was deleted for account {}'.format(address))
 
