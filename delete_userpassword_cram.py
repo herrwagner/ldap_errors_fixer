@@ -19,9 +19,10 @@ class UserPasswordCramDetector:
             LOGGER.info('Object {} has userpasswordcram! Deleting userpasswordcram...'.format(address))
             payload = dict()
             payload['userpasswordcram'] = ''
-            if payload['type'] == 'mailbox':
+            try:
                 route = address_route(address)
-            else:
+            except:
+                LOGGER.info('Account {} is not type mailbox. Skipped.'.format(address))
                 self.ef.write('Account {} is not type mailbox. Skipped.'.format(address))
                 self.ef.write('\n')
                 return
