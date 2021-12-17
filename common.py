@@ -22,7 +22,7 @@ LOGGER.addHandler(handler)
 PMAPI_USER = 'admin'
 PMAPI_PASSWORD = 'cnlbISgaJHtMkGDVjgxGi11E5EpO4vpc'
 PMAPI_HOST = 'api.freenet.de'
-PMAPI_VERSION = 'stable'
+PMAPI_VERSION = 'legacy'
 
 
 pmapi_client = MapiClient(PMAPI_USER, PMAPI_PASSWORD, hostname=PMAPI_HOST, mapi_version=PMAPI_VERSION)
