@@ -5,7 +5,7 @@ from common import LOGGER, open_file, domain_route, pmapi_client
 from fn_pymapi.errors import PymapiError
 
 
-NEW_MDBOX = 'mdbox128.freenet.de'
+NEW_MDBOX = 'mdbox214.freenet.de'
 
 
 class DircountUpdater:
@@ -13,14 +13,15 @@ class DircountUpdater:
         self.number_of_accounts = int(number_of_accounts) if number_of_accounts is not None else None
         self.actual_account = 0
         self.first_account = int(first_account)
-        self.tracking_file = 'password_modified_accounts.txt'
+        self.last_account = self.first_account
+        self.errors_file = 'errors_file.txt'
 
     def process_entry(self, dn, entry):
         if self.actual_account >= self.first_account:
             if self.number_of_accounts is not None and self.actual_account >= \
                     self.number_of_accounts + self.first_account:
                 sys.exit(0)
-            with open(self.tracking_file, 'w') as tf:
+            with open(self.errors_file, 'w') as ef:
                 try:
                     address = entry['cn'][0].decode("utf-8")
                 except KeyError:
@@ -31,22 +32,24 @@ class DircountUpdater:
                     return
                 payload = dict()
                 try:
-                    mdbox = entry['dircount'][0].decode('utf-8')
+                    dircount = entry['dircount'][0].decode('utf-8')
                 except UnicodeDecodeError:
-                    mdbox = entry['dircount'][0].decode('latin-1')
-                if mdbox == NEW_MDBOX:
+                    dircount = entry['dircount'][0].decode('latin-1')
+                if dircount.split()[0] == NEW_MDBOX:
                     return
                 payload['dircount'] = {'mailbox': NEW_MDBOX}
                 try:
+                    #LOGGER.debug('patch {} with payload: {}'.format(route, payload))
                     pmapi_client.make_request('patch', route, payload=payload)
+                    pass
                 except PymapiError as err:
                     LOGGER.error('PMAPI error: {}'.format(err))
-                    sys.exit(1)
+                    ef.write('Account {} failed with error {}'.format(address, err))
+                    ef.write("\n")
                 else:
-                    LOGGER.debug('Dircount mdbox was modified for account {}'.format(address))
-                    tf.write(address)
-                    tf.write("\n")
+                    LOGGER.info('Dircount mdbox was modified for account {}'.format(address))
         self.actual_account += 1
+        self.last_account += 1
 
 
 def update(dump_file, number_of_accounts=None, first_account=0):
@@ -54,3 +57,6 @@ def update(dump_file, number_of_accounts=None, first_account=0):
     processing_object = DircountUpdater(number_of_accounts, first_account)
     parser = ldap_parser.ParseLDIF(input_file, processing_object)
     parser.parse()
+    LOGGER.info('Last account was the number: {}'.format(processing_object.last_account))
+
+

@@ -13,7 +13,7 @@ LOGGER.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
 #handler = SysLogHandler('/dev/log')
-handler.setLevel(logging.DEBUG)
+
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 LOGGER.addHandler(handler)
@@ -23,7 +23,7 @@ LOGGER.addHandler(handler)
 PMAPI_USER = 'admin'
 PMAPI_PASSWORD = 'cnlbISgaJHtMkGDVjgxGi11E5EpO4vpc'
 PMAPI_HOST = 'api.freenet.de'
-PMAPI_VERSION = 'legacy'
+PMAPI_VERSION = 'stable'
 
 
 pmapi_client = MapiClient(PMAPI_USER, PMAPI_PASSWORD, hostname=PMAPI_HOST, mapi_version=PMAPI_VERSION)

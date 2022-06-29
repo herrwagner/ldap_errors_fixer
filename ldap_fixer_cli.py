@@ -8,7 +8,7 @@ import check_entry_mariadb
 import delete_old_entries
 import detect_ldap_problems
 import fix_wrong_format
-import update_password_fields
+import update_passwords
 import delete_userpassword_cram
 import modify_maildomain_dircount
 from config_loader import load_config
@@ -83,7 +83,7 @@ def update_password_fields(input_file, number_of_accounts, first_account):
         :param number_of_accounts: Number of accounts to update
         :param first_account: First account in the dump file to start updating
     """
-    update_password_fields.update(input_file, number_of_accounts=number_of_accounts,
+    update_passwords.update(input_file, number_of_accounts=number_of_accounts,
                                   first_account=first_account)
 
 
