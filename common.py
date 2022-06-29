@@ -2,6 +2,7 @@
 import sys
 import logging
 import re
+import gzip
 from logging.handlers import SysLogHandler
 from fn_pymapi import MapiClient
 
@@ -81,3 +82,12 @@ def remove_01019(addr):
         addr,
         flags=re.IGNORECASE,
     )
+
+
+def open_file(dump_file):
+    if dump_file.endswith('.gz'):
+        input_file = gzip.open(dump_file, 'rb')
+    else:
+        input_file = open(dump_file, 'rb')
+    return input_file
+

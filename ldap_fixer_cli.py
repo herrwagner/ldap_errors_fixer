@@ -10,6 +10,7 @@ import detect_ldap_problems
 import fix_wrong_format
 import update_password_fields
 import delete_userpassword_cram
+import modify_maildomain_dircount
 from config_loader import load_config
 from common import LOGGER
 
@@ -84,6 +85,20 @@ def update_password_fields(input_file, number_of_accounts, first_account):
     """
     update_password_fields.update(input_file, number_of_accounts=number_of_accounts,
                                   first_account=first_account)
+
+
+@cli.command()
+@click.argument('input_file')
+@click.option('--number_of_accounts', default=None)
+@click.option('--first_account', default=0)
+def update_maildomain_dircount(input_file, number_of_accounts, first_account):
+    """Updates dircount mdbox for mail domains in ldap using requests to PMAPI
+        :param input_file: Ldap dumb file to parse
+        :param number_of_accounts: Number of accounts to update
+        :param first_account: First account in the dump file to start updating
+    """
+    modify_maildomain_dircount.update(input_file, number_of_accounts=number_of_accounts,
+                                      first_account=first_account)
 
 
 if __name__ == '__main__':
