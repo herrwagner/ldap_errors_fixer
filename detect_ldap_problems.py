@@ -4,7 +4,7 @@ import gzip
 
 from common import LOGGER
 import ldap_parser
-from pattern_handler import PatternHandlerFactoryRegEx, PatternHandlerFactoryPattern
+from pattern_handler import PatternHandlerFactoryRegEx, PatternHandlerFactoryPattern, PatternHandlerFactoryList
 from problems_detector import *
 from check_entry_mariadb import open_mdb_connection
 
@@ -34,7 +34,10 @@ def detect_wrong_format(pattern_dict: dict, dump_file):
     if regex:
         handler = PatternHandlerFactoryRegEx(pattern_dict)
     else:
-        handler = PatternHandlerFactoryPattern(pattern_dict)
+        if isinstance(pattern_dict['value'], list):
+            handler = PatternHandlerFactoryList(pattern_dict)
+        else:
+            handler = PatternHandlerFactoryPattern(pattern_dict)
 
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')

@@ -39,7 +39,7 @@ def delete_submit_locks(input_file, limit_days_ago, number_of_accounts):
 @click.argument('input_file')
 @click.argument('pattern')
 def detect_wrong_format(input_file, pattern):
-    """Delete entries in ldap older than limit_days_ago before today
+    """Detect wrong format in ldap
         :param input_file: Ldap dumb file to parse
         :param pattern: Pattern to be detected, it must be defined in config.yml!
     """

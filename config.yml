@@ -11,3 +11,8 @@ wrong_comma:
   regex: True
   exclude:
     field: dn
+wrong_mid:
+  type: general
+  field: mid
+  value: ['freenet', 'frn.intern', 'minux', 'fdkb2b', 'players', 'fdkrz', 'lifemedien', 'unknown']
+  regex: false

@@ -47,6 +47,15 @@ class PatternHandlerString(PatternHandler):
         return self.pattern == value
 
 
+class PatternHandlerList(PatternHandler):
+    def __init__(self, pattern_dict):
+        super().__init__(pattern_dict)
+        self.pattern = pattern_dict['value']
+
+    def execute(self, value):
+        return self.pattern in value
+
+
 class PatternHandlerFactory:
     def __init__(self, pattern_dict):
         self.pattern_dict = pattern_dict
@@ -70,3 +79,11 @@ class PatternHandlerFactoryPattern(PatternHandlerFactory):
 
     def factory(self) -> PatternHandler:
         return PatternHandlerString(self.pattern_dict)
+
+
+class PatternHandlerFactoryList(PatternHandlerFactory):
+    def __init__(self, pattern_dict):
+        super().__init__(pattern_dict)
+
+    def factory(self) -> PatternHandler:
+        return PatternHandlerList(self.pattern_dict)
