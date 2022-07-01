@@ -53,7 +53,7 @@ class PatternHandlerList(PatternHandler):
         self.pattern = pattern_dict['value']
 
     def execute(self, value):
-        return self.pattern in value
+        return value not in self.pattern
 
 
 class PatternHandlerFactory:
