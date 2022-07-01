@@ -21,7 +21,7 @@ class DircountUpdater:
             if self.number_of_accounts is not None and self.actual_account >= \
                     self.number_of_accounts + self.first_account:
                 sys.exit(0)
-            with open(self.errors_file, 'w') as ef:
+            with open(self.errors_file, 'a') as ef:
                 try:
                     address = entry['cn'][0].decode("utf-8")
                 except KeyError:

@@ -8,8 +8,9 @@ from fn_pymapi.errors import PymapiError
 
 
 class UserPasswordCramDetector:
-    errors_file = 'errors_deleting_cram.txt'
-    ef = open(errors_file, 'w')
+    def __init__():
+        errors_file = 'errors_deleting_cram.txt'
+        ef = open(errors_file, 'w')
 
     def process_entry(self, dn, entry):
         try:
