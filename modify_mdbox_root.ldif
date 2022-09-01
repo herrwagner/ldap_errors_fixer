@@ -1,0 +1,4 @@
+dn: dc=maildomain,o=roka.net
+changetype: modify
+replace: mailbox
+mailbox: mdbox214.freenet.de

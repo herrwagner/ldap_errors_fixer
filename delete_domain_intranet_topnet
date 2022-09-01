@@ -1,0 +1,2 @@
+dn: dc=intranet.topnet.de,dc=maildomain,o=roka.net
+changetype: delete
