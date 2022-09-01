@@ -14,6 +14,8 @@ def processing_object_builder(type, output_file, handler):
         return ProblemsDetectorGeneral(output_file, handler)
     elif type == 'lock_submit':
         return SubmitLockDetector(output_file, handler, mariadb_connection=open_mdb_connection())
+    elif type == 'alias_domain':
+        return AliasDomainDetector(output_file, handler)
     else:
         LOGGER.error("Introduce a defined type in the configuration file!")
         sys.exit(1)

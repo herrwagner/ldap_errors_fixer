@@ -72,3 +72,19 @@ class SubmitLockDetector(ProblemsDetector):
                 locking_date = check_entry_mariadb(address, self.mariadb_connection, self.query)
                 self.output_file.write(address + ' ' + object_class + ' locking date in MariaDB: ' +
                                        locking_date + '\n')
+
+
+class AliasDomainDetector(ProblemsDetector):
+    def __init__(self, output_file, handler: PatternHandlerFactory):
+        super().__init__(output_file, handler)
+
+    def process_entry(self, dn, entry):
+        if entry['objectClass'][-1].decode("utf-8") == 'maildomain':
+            domain = entry['cn'][0].decode("utf-8")
+            if 'forwardto' in entry:
+                forward_to = entry['forwardto'][0].decode("utf-8")
+                LOGGER.info('Domain account {} is an alias to {}!'.format(domain, forward_to))
+                self.output_file.write(domain + ' is an alias to ' + forward_to + '\n')
+        else:
+            LOGGER.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
+            return
