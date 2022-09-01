@@ -18,5 +18,6 @@ wrong_mid:
   regex: false
 domain_forward_to:
   type: alias_domain
-  regex: false
-  field: forwardto
+  no_handler: True
+
+

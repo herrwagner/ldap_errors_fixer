@@ -9,7 +9,8 @@ from check_entry_mariadb import check_entry_mariadb
 class ProblemsDetector:
     def __init__(self, output_file, handler: PatternHandlerFactory):
         self.output_file = output_file
-        self.handler = handler.factory()
+        if handler is not None:
+            self.handler = handler.factory()
 
 
 class ProblemsDetectorGeneral(ProblemsDetector):
@@ -86,5 +87,5 @@ class AliasDomainDetector(ProblemsDetector):
                 LOGGER.info('Domain account {} is an alias to {}!'.format(domain, forward_to))
                 self.output_file.write(domain + ' is an alias to ' + forward_to + '\n')
         else:
-            LOGGER.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
+            #LOGGER.debug('Skipping object of class {}'.format(entry['objectClass'][-1].decode("utf-8")))
             return

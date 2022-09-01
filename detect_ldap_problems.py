@@ -28,18 +28,27 @@ def detect_wrong_format(pattern_dict: dict, dump_file):
         LOGGER.error("Introduce a type in the configuration file!")
         sys.exit(1)
     try:
-        regex = pattern_dict['regex']
+        pattern_dict['no_handler']
     except KeyError:
-        LOGGER.error("Introduce if the pattern is a regex in the configuration file!")
-        sys.exit(1)
-
-    if regex:
-        handler = PatternHandlerFactoryRegEx(pattern_dict)
+        has_handler = True
     else:
-        if isinstance(pattern_dict['value'], list):
-            handler = PatternHandlerFactoryList(pattern_dict)
-        else:
-            handler = PatternHandlerFactoryPattern(pattern_dict)
+        has_handler = False
+    if has_handler:
+        try:
+            regex = pattern_dict['regex']
+        except KeyError:
+            LOGGER.error("Introduce if the pattern is a regex in the configuration file!")
+            sys.exit(1)
+
+            if regex:
+                handler = PatternHandlerFactoryRegEx(pattern_dict)
+            else:
+                if isinstance(pattern_dict['value'], list):
+                    handler = PatternHandlerFactoryList(pattern_dict)
+                else:
+                    handler = PatternHandlerFactoryPattern(pattern_dict)
+    else:
+        handler = None
 
     if dump_file.endswith('.gz'):
         input_file = gzip.open(dump_file, 'rb')
