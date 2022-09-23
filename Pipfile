@@ -10,7 +10,7 @@ verify_ssl = true
 
 [packages]
 requests = "*"
-fn-pymapi = ">=0.1.0"
+fn-pymapi = {version=">=0.1.0", index="freenet"}
 pyaml = "*"
 python-ldap = "*"
 PyMySQL = "*"
@@ -19,4 +19,4 @@ click = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.5"
+python_version = "3"
